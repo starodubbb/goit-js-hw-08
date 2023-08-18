@@ -8,8 +8,6 @@ galleryRef.innerHTML = makeGalleryItemsMarkup(galleryItems);
 
 let gallery = createGallery();
 
-console.log(gallery);
-
 function createGallery() {
   return new SimpleLightbox('.gallery__item a', {
     captionsData: 'alt',
