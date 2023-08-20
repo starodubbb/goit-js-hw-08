@@ -1,42 +1,62 @@
 import throttle from 'lodash.throttle';
 
-const formRef = document.querySelector('.feedback-form');
-
 const STORAGE_KEY = 'videoplayer-current-time';
+const formRef = document.querySelector('.feedback-form');
+const formElements = formRef.querySelectorAll('[name]');
+const formElNames = Array.from(formElements).map(el => el.name);
+
+let formData = getFormDataFromStorage() ?? {};
+displayForm();
 
 formRef.addEventListener('input', throttle(inputFormFieldHandler, 500));
 formRef.addEventListener('submit', submitFormHandler);
 
-fillForm(formRef);
-
 function inputFormFieldHandler(event) {
   const fieldRef = event.target;
 
-  const stringDataFromStorage = localStorage.getItem(STORAGE_KEY);
-  const FormData = stringDataFromStorage
-    ? JSON.parse(stringDataFromStorage)
-    : {};
-
-  FormData[fieldRef.name] = fieldRef.value;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(FormData));
+  formData[fieldRef.name] = fieldRef.value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
 }
 
 function submitFormHandler(event) {
   event.preventDefault();
+  const isFullForm = checkIsFullForm(() => {
+    alert('Please fill in all the fields!');
+  });
 
+  if (!isFullForm) {
+    return;
+  }
+
+  console.log(formData);
+
+  formData = {};
   localStorage.removeItem(STORAGE_KEY);
   event.currentTarget.reset();
 }
 
-function fillForm(formRef) {
+function getFormDataFromStorage() {
   const stringDataFromStorage = localStorage.getItem(STORAGE_KEY);
   if (!stringDataFromStorage) {
-    return;
+    return null;
   }
-  const FormData = JSON.parse(stringDataFromStorage);
-  const dataKeys = Object.keys(FormData);
+  return JSON.parse(stringDataFromStorage);
+}
+
+function displayForm() {
+  const dataKeys = Object.keys(formData);
 
   for (const key of dataKeys) {
-    formRef.elements[key].value = FormData[key];
+    formRef.elements[key].value = formData[key];
   }
+}
+
+function checkIsFullForm(onEmpty) {
+  for (const name of formElNames) {
+    if (!formData[name] || formData[name] === '') {
+      onEmpty?.();
+      return false;
+    }
+  }
+  return true;
 }
