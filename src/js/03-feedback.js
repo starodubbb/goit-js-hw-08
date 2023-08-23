@@ -1,6 +1,6 @@
 import throttle from 'lodash.throttle';
 
-const STORAGE_KEY = 'videoplayer-current-time';
+const STORAGE_KEY = 'feedback-form-state';
 const formRef = document.querySelector('.feedback-form');
 const formElements = formRef.querySelectorAll('[name]');
 const formElNames = Array.from(formElements).map(el => el.name);

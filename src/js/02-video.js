@@ -21,6 +21,7 @@ function endedHandler(event) {
 function setPlayerTime() {
   const currentTime = localStorage.getItem(STORAGE_KEY);
   if (!currentTime) {
+    player.setCurrentTime(0);
     return;
   }
   player.setCurrentTime(currentTime);
